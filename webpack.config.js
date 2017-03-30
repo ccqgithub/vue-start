@@ -1,29 +1,33 @@
 const path = require('path');
 const fs = require('fs');
-
+const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
-const WebWebpackPlugin = require('web-webpack-plugin');
-const { WebPlugin, AutoWebPlugin } = WebWebpackPlugin;
 
-const extractHtml = new ExtractTextPlugin('html/[name].html');
+// extract css
+const extractLESS = new ExtractTextPlugin('[name].css');
 
-let entrys = getEntrys();
+// let entrys = getEntrys();
 // console.log(entrys);
 
 module.exports = {
-  entry: Object.assign(entrys, {
-    //
+  context: __dirname,
+
+  entry: Object.assign({
+    a: './entry/a.js',
+    b: './entry/b.js',
+    'com/common': ['./entry/com/common.js'],
+    'test-less': './less/test.less'
   }),
 
   output: {
     path: path.resolve(__dirname, 'public'),
-    filename: '[name].js',
+    filename: '[name].bundle.js',
     publicPath: '/public/'
   },
 
    resolve: {
-      extensions: ['.js', '.json', '.jsx', '.css', '.vue'],
+      extensions: ['.js', '.json', '.jsx', '.css', '.vue', '.less'],
    },
 
    module: {
@@ -33,7 +37,7 @@ module.exports = {
         use: [{
           loader: 'html-loader',
           options: {
-            attrs: ['script:src', 'img:src'],
+            attrs: ['img:src', 'script:src'],
             minimize: true,
             removeComments: false,
             collapseWhitespace: false
@@ -50,17 +54,35 @@ module.exports = {
       {
         test: /\.js$/,
         use: [
-
           {
             loader: 'babel-loader',
           },
         ]
       },
       {
-        test: /\.(jpg|png|gif|otf|eot|svg|ttf|woff2)$/,
+        test: /\.less$/,
+        use: extractLESS.extract({
+          use: [
+            // {
+            //   loader: "style-loader"
+            // },
+            {
+              loader: "css-loader"
+            },
+            {
+              loader: 'less-loader'
+            },
+          ]
+        })
+      },
+      {
+        test: /\.(jpg|jpeg|png|gif|otf|eot|svg|ttf|woff2)$/,
         use: [
           {
-            loader: 'url-loader'
+            loader: 'url-loader',
+            options: {
+              limit: 10000
+            }
           }
         ]
       }
@@ -69,8 +91,14 @@ module.exports = {
 
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'html/index.html'
-    })
+      template: './html/index.html',
+      // chunks: ['a']
+    }),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'com/common',
+      minify: false,
+    }),
+    extractLESS
   ],
 
   devServer: {
@@ -96,12 +124,12 @@ function getEntrys() {
         walk(f, newPrefix);
       } else if (fs.statSync(f).isFile()) {
         newPrefix = newPrefix.replace(/^\//, '');
-        entrys[newPrefix] = newPrefix;
+        entrys[newPrefix] = './' + newPrefix;
       }
     });
   }
 
-  walk(entryPath, '');
+  walk(entryPath, 'entry');
 
   return entrys;
 }
