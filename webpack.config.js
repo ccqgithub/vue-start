@@ -4,8 +4,12 @@ const webpack = require('webpack');
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 
+const publicMainPath = '/';
+const outputPath = path.resolve(__dirname, 'public');
+
 // extract css
-const extractLESS = new ExtractTextPlugin('[name].css');
+const extractLESS = new ExtractTextPlugin(`css/[name].[chunkhash].css`);
+
 
 // let entrys = getEntrys();
 // console.log(entrys);
@@ -13,17 +17,17 @@ const extractLESS = new ExtractTextPlugin('[name].css');
 module.exports = {
   context: __dirname,
 
-  entry: Object.assign({
-    a: './entry/a.js',
-    b: './entry/b.js',
+  entry: {
+    'index': './entry/index.js',
+    'test': './entry/test.js',
     'com/common': ['./entry/com/common.js'],
-    'test-less': './less/test.less'
-  }),
+    'client': ['webpack-hot-middleware/client'],
+  },
 
   output: {
-    path: path.resolve(__dirname, 'public'),
-    filename: '[name].bundle.js',
-    publicPath: '/public/'
+    path: outputPath,
+    filename: `js/[name].js`,
+    publicPath: publicMainPath,
   },
 
    resolve: {
@@ -37,10 +41,11 @@ module.exports = {
         use: [{
           loader: 'html-loader',
           options: {
-            attrs: ['img:src', 'script:src'],
+            attrs: ['img:src'],
             minimize: true,
             removeComments: false,
-            collapseWhitespace: false
+            collapseWhitespace: false,
+            interpolate: 'require',
           }
         }]
       },
@@ -62,6 +67,7 @@ module.exports = {
       {
         test: /\.less$/,
         use: extractLESS.extract({
+          publicPath: `${publicMainPath}css/`,
           use: [
             // {
             //   loader: "style-loader"
@@ -81,7 +87,9 @@ module.exports = {
           {
             loader: 'url-loader',
             options: {
-              limit: 10000
+              limit: 10000,
+              name: `[path][name].[hash].[ext]`,
+              publicPath: publicMainPath,
             }
           }
         ]
@@ -90,46 +98,57 @@ module.exports = {
   },
 
   plugins: [
-    new HtmlWebpackPlugin({
-      template: './html/index.html',
-      // chunks: ['a']
+    new webpack.HotModuleReplacementPlugin(),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'manifest'
     }),
     new webpack.optimize.CommonsChunkPlugin({
       name: 'com/common',
-      minify: false,
+      chunks: ['client', 'com/common', 'index', 'test'],
+      // minChunks: 2,
+      // children: true,
+      // async: false,
+      // minSize: 0,
     }),
-    extractLESS
+    extractLESS,
+    // entry htmls
+    new HtmlWebpackPlugin({
+      template: './html/index.html',
+      filename: 'index.html',
+      chunks: ['client', 'manifest', 'com/common', 'index'],
+      chunksSortMode: getChunkSortMode(['manifest', 'client', 'com/common', 'index'])
+    }),
+    new HtmlWebpackPlugin({
+      template: './html/test.html',
+      filename: 'test.html',
+      chunks: ['manifest', 'com/common', 'test'],
+      chunksSortMode: getChunkSortMode(['manifest', 'com/common', 'test'])
+    }),
   ],
 
   devServer: {
-    contentBase: path.join(__dirname, 'public'),
+    contentBase: outputPath,
     compress: true,
-    port: 9000
+    hot: true,
+    hotOnly: true,
+
+    host: '0.0.0.0',
+    port: 9000,
+    inline: true,
+
+
+    // 代理，api接口代理
+    // 详情见：https://github.com/chimurai/http-proxy-middleware
+    proxy: {
+      '/api': 'http://www.baidu.com/api/'
+    }
   }
 }
 
-// return all entrys
-function getEntrys() {
-  let entrys = {};
-  let entryPath = path.join(__dirname, './entry');
-
-  function walk(p, prefix) {
-    let dirList = fs.readdirSync(p);
-
-    dirList.forEach(function(item) {
-      let f = path.join(p, item);
-      let newPrefix = prefix + '/' + item;
-
-      if (fs.statSync(f).isDirectory()) {
-        walk(f, newPrefix);
-      } else if (fs.statSync(f).isFile()) {
-        newPrefix = newPrefix.replace(/^\//, '');
-        entrys[newPrefix] = './' + newPrefix;
-      }
-    });
+function getChunkSortMode(orders) {
+  return function chunksSortMode(c1, c2) {
+    let o1 = orders.indexOf(c1.names[0]);
+    let o2 = orders.indexOf(c2.names[0]);
+    return o1 - o2;
   }
-
-  walk(entryPath, 'entry');
-
-  return entrys;
 }

@@ -3,7 +3,5 @@ import Index from '../component/index';
 
 require('../less/a.less');
 
-new Vue({
-  el: '#app',
-  data: {}
-});
+const Comp = Vue.extend(Index);
+new Comp({}).$mount('#app');
