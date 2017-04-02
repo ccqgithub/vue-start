@@ -6,6 +6,7 @@ var isProduction = process.env.NODE_ENV === 'production'
 exports.getStyleLoaders = function(options) {
   options = options || {}
 
+  var styleLooader = options.isVue ? 'vue-style-loader' : 'style-loader';
   var cssLoader = {
     loader: 'css-loader',
     options: {
@@ -31,10 +32,10 @@ exports.getStyleLoaders = function(options) {
     if (options.extract) {
       return options.extractPlugin.extract({
         use: loaders,
-        fallback: 'vue-style-loader'
+        fallback: styleLooader
       })
     } else {
-      return ['vue-style-loader'].concat(loaders)
+      return [styleLooader].concat(loaders)
     }
   }
 

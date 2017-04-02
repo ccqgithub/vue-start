@@ -1,6 +1,6 @@
 <template lang="html">
   <div class="page">
-    index2
+    index2 8888
   </div>
 </template>
 

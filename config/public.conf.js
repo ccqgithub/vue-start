@@ -4,19 +4,22 @@ var configs = {};
 // local
 configs['local'] = {
   publicPath: '/',
-  sourceMap: true
+  sourceMap: true,
+  compress: false
 }
 
 // test
 configs['test'] = {
   publicPath: '/',
-  sourceMap: true
+  sourceMap: true,
+  compress: false
 }
 
 // prod
 configs['prod'] = {
   publicPath: '/',
-  sourceMap: false
+  sourceMap: false,
+  compress: false
 }
 
 // module.exports

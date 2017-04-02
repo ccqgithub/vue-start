@@ -1,12 +1,17 @@
 var path = require('path')
+var webpack = require('webpack')
+var ExtractTextPlugin = require('extract-text-webpack-plugin')
 var utils = require('./utils')
-var entryConfig = require('../config/entry.conf')
+var config = require('../config/index.conf')
 var defines = require('../config/define.conf')
 var publicConf = require('../config/public.conf')
-var entrys = entryConfig.entrys
+var entrys = config.entrys
+var isProduction = process.env.NODE_ENV == 'production'
 
 // extract css
-var extractCss = new ExtractTextPlugin('css/[name].css')
+var extractCss = isProduction ?
+  new ExtractTextPlugin('css/[name].css') :
+  new ExtractTextPlugin('css/[name].[chunkhash].css')
 
 var styleLoaders = utils.getStyleLoaders({
   extract: true,
@@ -19,11 +24,13 @@ function resolve (dir) {
 }
 
 module.exports = {
+  context: path.resolve(__dirname, '../'),
+
   entry: entrys,
 
   output: {
-    path: path.join(__dirname, '../dist'),
-    filename: '[name].js',
+    path: config.distPath,
+    filename: 'js/[name].js',
     publicPath: publicConf.publicPath,
   },
 
@@ -86,5 +93,7 @@ module.exports = {
 
   plugins: [
     new webpack.DefinePlugin(defines),
-  ].concat(entryConfig.htmlPlugins)
+    extractCss
+  ].concat(config.htmlPlugins)
+  .concat(config.commonPlugins)
 }
