@@ -42,6 +42,7 @@
     "webpack-merge": "^4.1.0"
   },
   "dependencies": {
+    "lodash": "^4.17.4",
     "vue": "^2.2.6",
     "vue-router": "^2.3.0",
     "vuex": "^2.2.1"

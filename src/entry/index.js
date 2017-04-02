@@ -1,7 +1,11 @@
 import Vue from 'vue';
-import Index from '../component/index';
+import VueRouter from 'vue-router';
+import Index from '../component/Index';
 
-require('../less/a.less');
+require('../less/index.less');
 
-const Comp = Vue.extend(Index);
-new Comp({}).$mount('#app');
+Vue.use(VueRouter);
+
+const Com = Vue.extend(Index);
+
+new Com({}).$mount('#app');

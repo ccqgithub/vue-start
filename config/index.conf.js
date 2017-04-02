@@ -20,6 +20,7 @@ module.exports = {
     new webpack.optimize.CommonsChunkPlugin({
       name: 'com/common',
       chunks: ['hot-reload-client', 'com/common', 'index'],
+      minChunks: 2,
     }),
   ],
 
@@ -30,7 +31,7 @@ module.exports = {
       chunks: !isProduction ?
         ['manifest', 'hot-reload-client', 'com/common', 'index'] :
         ['manifest', 'com/common', 'index'],
-      chunksSortMode: getChunkSortMode(),
+      chunksSortMode: 'dependency',
       headReplaceExp: /<!-- html-webpack-plugin-css -->/,
       bodyReplaceExp: /<!-- html-webpack-plugin-script -->/,
     }),
@@ -40,26 +41,9 @@ module.exports = {
       chunks: !isProduction ?
         ['manifest', 'hot-reload-client', 'com/common', 'test'] :
         ['manifest', 'com/common', 'test'],
-      chunksSortMode: getChunkSortMode(),
+      chunksSortMode: 'dependency',
       headReplaceExp: /<!-- html-webpack-plugin-css -->/,
       bodyReplaceExp: /<!-- html-webpack-plugin-script -->/,
     }),
   ]
-}
-
-// getChunkSortMode
-function getChunkSortMode() {
-  var orders = [
-    'manifest',
-    'hot-reload-client',
-    'com/common',
-    'index',
-    'test'
-  ];
-
-  return function chunksSortMode(c1, c2) {
-    let o1 = orders.indexOf(c1.names[0]);
-    let o2 = orders.indexOf(c2.names[0]);
-    return o1 - o2;
-  }
 }

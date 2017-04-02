@@ -14,7 +14,7 @@ var extractCss = isProduction ?
   new ExtractTextPlugin('css/[name].[chunkhash].css')
 
 var styleLoaders = utils.getStyleLoaders({
-  extract: true,
+  extract: isProduction,
   extractPlugin: extractCss
 })
 
@@ -27,6 +27,8 @@ module.exports = {
   context: path.resolve(__dirname, '../'),
 
   entry: entrys,
+
+  // cache: false,
 
   output: {
     path: config.distPath,
