@@ -9,7 +9,7 @@
         <a href="javascript:;" @click="shuffleUser">洗牌</a>
       </div>
       <transition-group tag="ul" name="list" class="users">
-        <li v-for="(user, index) in users" :key="user.no">
+        <li v-for="(user, index) in filterUsers" :key="user.no">
           <em>
             {{user.no}}
           </em>
@@ -34,11 +34,24 @@ export default {
       users: []
     }
   },
+  computed: {
+    filterUsers() {
+      if (this.search.trim() == '') return this.users;
+      return this.users.filter(user => {
+        return user.name.indexOf(this.search.trim()) != -1;
+      })
+    }
+  },
   methods: {
     addUser() {
+      let str = 'abcdefghijklmnopqrstuvwxyz012345678ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      let name = new Array(8).fill(1).map((item, index) => {
+        return str[Math.round(Math.random() * (str.length - 1))];
+      }).join('');
+
       this.users.unshift({
         no: this.no,
-        name: Math.round(Math.random() * 1000000)
+        name: name
       });
       this.no ++;
     },
