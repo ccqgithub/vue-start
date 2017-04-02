@@ -11,7 +11,9 @@
     </ul>
   </nav>
   <transition name="router-transition" mode="out-in" class="router">
-    <router-view></router-view>
+    <keep-alive>
+      <router-view></router-view>
+    </keep-alive>
   </transition>
 </div>
 </template>
