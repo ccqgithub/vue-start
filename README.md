@@ -78,6 +78,10 @@ npm run build
 npm run build-local
 ```
 
+## 开发环境
+
+- node 最新 LTS 版本
+
 ## 相关工具
 
 - [vue-cli](https://github.com/vuejs/vue-cli), vue 官方start kit
