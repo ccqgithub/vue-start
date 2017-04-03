@@ -1,6 +1,7 @@
 var path = require('path')
 var webpack = require('webpack')
-var HtmlWebpackPlugin = require('html-webpack-plugin-fix')
+var HtmlWebpackPlugin = require('html-webpack-plugin')
+var HtmlWebpackPlaceAssetsPlugin = require('html-webpack-place-assets-plugin')
 var isProduction = process.env.NODE_ENV === 'production'
 
 module.exports = {
@@ -32,8 +33,7 @@ module.exports = {
         ['manifest', 'hot-reload-client', 'com/common', 'index'] :
         ['manifest', 'com/common', 'index'],
       chunksSortMode: 'dependency',
-      headReplaceExp: /<!-- html-webpack-plugin-css -->/,
-      bodyReplaceExp: /<!-- html-webpack-plugin-script -->/,
+      inject: false
     }),
     new HtmlWebpackPlugin({
       template: './src/html/test.html',
@@ -42,8 +42,12 @@ module.exports = {
         ['manifest', 'hot-reload-client', 'com/common', 'test'] :
         ['manifest', 'com/common', 'test'],
       chunksSortMode: 'dependency',
+      inject: false,
+    }),
+    new HtmlWebpackPlaceAssetsPlugin({
       headReplaceExp: /<!-- html-webpack-plugin-css -->/,
       bodyReplaceExp: /<!-- html-webpack-plugin-script -->/,
-    }),
+      tagsJoin: '\n  ',
+    })
   ]
 }

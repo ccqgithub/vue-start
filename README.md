@@ -68,6 +68,8 @@
 
 下面是两个例子，自己可以根据需求在scripts中添加修改自定义命令
 ```sh
+npm install
+
 # 启动本地server
 npm run dev
 

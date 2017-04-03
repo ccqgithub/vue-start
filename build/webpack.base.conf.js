@@ -10,8 +10,9 @@ var isProduction = process.env.NODE_ENV == 'production'
 
 // extract css
 var extractCss = isProduction ?
-  new ExtractTextPlugin('css/[name].css') :
-  new ExtractTextPlugin('css/[name].[chunkhash].css')
+  new ExtractTextPlugin('css/[name].[chunkhash].css') :
+  new ExtractTextPlugin('css/[name].css')
+
 
 var styleLoaders = utils.getStyleLoaders({
   extract: isProduction,
