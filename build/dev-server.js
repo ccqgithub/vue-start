@@ -14,7 +14,7 @@ var port = serverConfig.port
 var autoOpenBrowser = !!serverConfig.autoOpenBrowser
 // Define HTTP proxies to your custom API backend
 // https://github.com/chimurai/http-proxy-middleware
-var proxyTable = serverConfig.proxyTable
+var proxyTable = serverConfig.proxy
 
 var app = express()
 var compiler = webpack(webpackConfig)
