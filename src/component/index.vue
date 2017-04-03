@@ -1,6 +1,9 @@
 <template lang="html">
 <div id="app" class="app">
   <nav class="nav">
+    <span class="user">
+      user: {{loginUser.name}}
+    </span>
     <ul>
       <li>
         <router-link :to="{ name: 'home'}" exact>Home</router-link>
@@ -19,6 +22,7 @@
 </template>
 
 <script>
+import { mapGetters } from 'vuex';
 import VueRouter from 'vue-router';
 import routes from '../routes';
 
@@ -29,7 +33,12 @@ const router = new VueRouter({
 export default {
   router,
   mounted() {
-    // this.$router.push('/user')
+    // console.log(this.$store)
+  },
+  computed: {
+    ...mapGetters([
+      'loginUser',
+    ])
   }
 }
 </script>
@@ -55,7 +64,13 @@ export default {
   height: 50px;
   background: rgba(0, 0, 0, .9);
   border-bottom: 1px solid #000;
-  text-align: center;
+  display: flex;
+  justify-content: center;
+
+  .user {
+    color: #ddd;
+    line-height: 50px;
+  }
 
   ul {
     margin: 0;

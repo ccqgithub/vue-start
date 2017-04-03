@@ -1,22 +1,28 @@
 <template lang="html">
   <div class="page">
+    <transition name="fade">
+      <div class="loading" v-if="isLoading">
+        <span>loading...</span>
+      </div>
+    </transition>
+
     <div class="container">
       <div class="bar">
-        <div class="search">
-          <input type="text" placeholder="search..." v-model="search">
+        <div class="filter">
+          <input type="text" placeholder="filter..." v-model="filter">
         </div>
-        <a href="javascript:;" @click="addUser">Add</a>
-        <a href="javascript:;" @click="shuffleUser">洗牌</a>
+        <a href="javascript:;" @click="addNewUser">Add</a>
+        <a href="javascript:;" @click="userShuffle">洗牌</a>
       </div>
       <transition-group tag="ul" name="list" class="users">
-        <li v-for="(user, index) in filterUsers" :key="user.no">
+        <li v-for="(user, index) in filterUsers" :key="user.id">
           <em>
-            {{user.no}}
+            {{user.id}}
           </em>
           <span>
             {{user.name}}
           </span>
-          <a href="javascript:;" @click="deleteUser(user, index)">Delete</a>
+          <a href="javascript:;" @click="userDelete(user.id)">Delete</a>
         </li>
       </transition-group>
     </div>
@@ -25,42 +31,48 @@
 
 <script>
 import _ from 'lodash';
+import { mapGetters, mapActions, mapMutations } from 'vuex';
 
 export default {
   data() {
     return {
-      no: 0,
-      search: '',
-      users: []
+      filter: '',
+      isLoading: false,
     }
   },
   computed: {
     filterUsers() {
-      if (this.search.trim() == '') return this.users;
-      return this.users.filter(user => {
-        return user.name.indexOf(this.search.trim()) != -1;
+      if (this.filter.trim() == '') return this.userList;
+      return this.userList.filter(user => {
+        return user.name.indexOf(this.filter.trim()) != -1;
       })
-    }
+    },
+    ...mapGetters({
+      userList: 'userList'
+    })
   },
   methods: {
-    addUser() {
+    ...mapActions([
+      'userAdd',
+      'userDelete'
+    ]),
+    // 跳过action，直接使用mutation
+    ...mapMutations([
+      'userShuffle'
+    ]),
+    addNewUser() {
       let str = 'abcdefghijklmnopqrstuvwxyz012345678ABCDEFGHIJKLMNOPQRSTUVWXYZ'
+      let id = Math.round(Math.random() * 1000000000)
       let name = new Array(8).fill(1).map((item, index) => {
         return str[Math.round(Math.random() * (str.length - 1))];
       }).join('');
 
-      this.users.unshift({
-        no: this.no,
-        name: name
-      });
-      this.no ++;
+      this.isLoading = true
+      this.userAdd({id, name})
+        .then(data => {
+          this.isLoading = false
+        })
     },
-    deleteUser(user, index) {
-      this.users.splice(index, 1);
-    },
-    shuffleUser() {
-      this.users = _.shuffle(this.users)
-    }
   },
   mounted() {
     console.log('home ...')
@@ -71,6 +83,29 @@ export default {
 <style lang="less" scoped>
 .page {
   padding: 50px;
+  position: relative;
+}
+
+.loading {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  z-index: 10;
+  background: rgba(0, 0, 0, .5);
+  color: #fff;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+// transition
+.fade-enter-active, .fade-leave-active {
+  transition: opacity .3s
+}
+.fade-enter, .fade-leave-to {
+  opacity: 0
 }
 
 .container {
@@ -85,7 +120,7 @@ export default {
   display: flex;
   justify-content: center;
 
-  .search {
+  .filter {
     flex: 1;
   }
 
@@ -134,7 +169,7 @@ export default {
     line-height: 50px;
 
     em {
-      width: 100px;
+      width: 150px;
     }
 
     span {

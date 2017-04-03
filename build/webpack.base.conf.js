@@ -62,7 +62,24 @@ module.exports = {
         test: /\.vue$/,
         loader: 'vue-loader',
         options: {
-          loaders: styleLoaders
+          loaders: Object.assign({}, styleLoaders, {
+            js: [
+              {
+                loader: 'babel-loader',
+                options: {
+                  'presets': [
+                    ['env', {
+                      'targets': {
+                        'browsers': ['not ie <= 8']
+                      }
+                    }],
+                    'stage-2',
+                    'stage-3',
+                  ],
+                }
+              }
+            ]
+          })
         }
       },
       {
@@ -71,8 +88,23 @@ module.exports = {
       },
       {
         test: /\.js$/,
-        loader: 'babel-loader',
-        include: [resolve('src'), resolve('test')]
+        include: [resolve('src'), resolve('test')],
+        use: [
+          {
+            loader: 'babel-loader',
+            options: {
+              'presets': [
+                ['env', {
+                  'targets': {
+                    'browsers': ['not ie <= 8']
+                  }
+                }],
+                'stage-2',
+                'stage-3',
+              ],
+            }
+          }
+        ]
       },
       {
         test: /\.(png|jpe?g|gif|svg)(\?.*)?$/,
