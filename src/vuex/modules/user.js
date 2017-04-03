@@ -10,7 +10,7 @@ export default {
       state.list.unshift(user)
     },
     userDelete(state, userId) {
-      let index = state.list.find((item, idx) => item.id == userId)
+      let index = state.list.findIndex((item, idx) => item.id == userId)
       state.list.splice(index, 1)
     },
     userShuffle(state) {
