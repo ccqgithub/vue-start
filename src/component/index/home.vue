@@ -32,6 +32,7 @@
 <script>
 import _ from 'lodash';
 import { mapGetters, mapActions, mapMutations } from 'vuex';
+import userTypes from '../../vuex/types/user';
 
 export default {
   data() {
@@ -48,18 +49,18 @@ export default {
       })
     },
     ...mapGetters({
-      userList: 'userList'
+      userList: userTypes.USER_LIST
     })
   },
   methods: {
-    ...mapActions([
-      'userAdd',
-      'userDelete'
-    ]),
+    ...mapActions({
+      userAdd: userTypes.USER_ADD,
+      userDelete: userTypes.USER_DELETE
+    }),
     // 跳过action，直接使用mutation
-    ...mapMutations([
-      'userShuffle'
-    ]),
+    ...mapMutations({
+      userShuffle:userTypes.USER_SHUFFLE
+    }),
     addNewUser() {
       let str = 'abcdefghijklmnopqrstuvwxyz012345678ABCDEFGHIJKLMNOPQRSTUVWXYZ'
       let id = Math.round(Math.random() * 1000000000)

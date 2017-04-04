@@ -25,6 +25,7 @@
 import { mapGetters } from 'vuex';
 import VueRouter from 'vue-router';
 import routes from '../routes';
+import mainTypes from '../vuex/types/main';
 
 const router = new VueRouter({
   routes
@@ -36,9 +37,9 @@ export default {
     // console.log(this.$store)
   },
   computed: {
-    ...mapGetters([
-      'loginUser',
-    ])
+    ...mapGetters({
+      loginUser: mainTypes.LOGIN_USER
+    })
   }
 }
 </script>

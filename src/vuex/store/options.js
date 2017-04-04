@@ -1,4 +1,5 @@
 import userModule from '../modules/user'
+import types from '../types/main'
 
 // state
 export let state = {
@@ -17,7 +18,7 @@ export let actions = {}
 
 // getters
 export let getters = {
-  loginUser(state) {
+  [types.LOGIN_USER](state) {
     return state.loginUser;
   }
 }
