@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-local": "PROD_ENV=local node build/build.js",
-    "build": "PROD_ENV=prod node build/build.js",
-    "dev": "PROD_ENV=local node build/dev-server.js"
+    "build-local": "cross-env PROD_ENV=local node build/build.js",
+    "build": "cross-env PROD_ENV=prod node build/build.js",
+    "dev": "cross-env PROD_ENV=local node build/dev-server.js"
   },
   "author": "",
   "license": "ISC",
@@ -21,6 +21,7 @@
     "babel-preset-stage-3": "^6.22.0",
     "bundle-loader": "^0.5.5",
     "copy-webpack-plugin": "^4.0.1",
+    "cross-env": "^4.0.0",
     "css-loader": "^0.27.3",
     "eventsource-polyfill": "^0.9.6",
     "extract-loader": "^0.1.0",
