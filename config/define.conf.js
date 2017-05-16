@@ -1,5 +1,5 @@
 var merge = require('webpack-merge')
-var PROD_ENV = process.env.PROD_ENV || 'local'
+var APP_ENV = process.env.APP_ENV || 'local'
 var defines = {};
 
 // local
@@ -21,4 +21,4 @@ defines['prod'] = {
 }
 
 // module.exports
-module.exports = defines[PROD_ENV]
+module.exports = defines[APP_ENV]

@@ -1,4 +1,4 @@
-var PROD_ENV = process.env.PROD_ENV || 'local'
+var APP_ENV = process.env.APP_ENV || 'local'
 var configs = {};
 
 // local
@@ -23,4 +23,4 @@ configs['prod'] = {
 }
 
 // module.exports
-module.exports = configs[PROD_ENV]
+module.exports = configs[APP_ENV]

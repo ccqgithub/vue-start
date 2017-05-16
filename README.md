@@ -17,7 +17,7 @@
 - `production`
 - `testing`
 
-> `process.env.PROD_ENV`, 表示针对不同发布环境的构建而不同，主要服务于`config/define.conf.js` 和 `config/public.conf.js`，比如不同环境配置不同API 和域名等等...
+> `process.env.APP_ENV`, 表示针对不同发布环境的构建而不同，主要服务于`config/define.conf.js` 和 `config/public.conf.js`，比如不同环境配置不同API 和域名等等...
 
 - 'local'
 - 'prod'
@@ -31,8 +31,8 @@
 - `config`: 配置
 
   - `index.conf.js`: 打包入口配置，chunsk配置等...
-  - `define.conf.js`: 针对不同`PROD_ENV`, 配置替换代码中的常量，如环境(`process.env.NODE_ENV`) 或 API地址(`API_BASE_URL`)等等, 使用[webpack.DefinePlugin](https://webpack.js.org/plugins/define-plugin/)插件...
-  - `public.conf.js`: 针对不同`PROD_ENV`, 配置打包输出，如publicPath等...
+  - `define.conf.js`: 针对不同`APP_ENV`, 配置替换代码中的常量，如环境(`process.env.NODE_ENV`) 或 API地址(`API_BASE_URL`)等等, 使用[webpack.DefinePlugin](https://webpack.js.org/plugins/define-plugin/)插件...
+  - `public.conf.js`: 针对不同`APP_ENV`, 配置打包输出，如publicPath等...
   - `server.conf.js`: 开发环境配置
 
 - `src`： 源码
@@ -60,9 +60,9 @@
 ```json
 "scripts": {
   "test": "echo \"Error: no test specified\" && exit 1",
-  "build-local": "PROD_ENV=local node build/build.js",
-  "build": "PROD_ENV=prod node build/build.js",
-  "dev": "PROD_ENV=local node build/dev-server.js"
+  "build-local": "APP_ENV=local node build/build.js",
+  "build": "APP_ENV=prod node build/build.js",
+  "dev": "APP_ENV=local node build/dev-server.js"
 },
 ```
 
