@@ -127,6 +127,7 @@ module.exports = {
   },
 
   plugins: [
+    new webpack.optimize.ModuleConcatenationPlugin(),
     new webpack.DefinePlugin(defines),
     extractCss
   ].concat(config.htmlPlugins)
