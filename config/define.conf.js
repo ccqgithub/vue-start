@@ -1,24 +1,29 @@
-var merge = require('webpack-merge')
+/**
+ * 用于配置 webpack.DefinePlugin
+ */
+
 var APP_ENV = process.env.APP_ENV || 'local'
 var defines = {};
 
-// local
-defines['local'] = {
-  NODE_ENV: JSON.stringify('development'),
+// common
+var common = {
   API_BASE_URL: JSON.stringify('http://www.api.com/'),
 }
+
+// local
+defines['local'] = Object.assign({}, common, {
+  NODE_ENV: JSON.stringify('development'),
+})
 
 // testing
-defines['test'] = {
+defines['test'] = Object.assign({}, common, {
   NODE_ENV: JSON.stringify('production'),
-  API_BASE_URL: JSON.stringify('http://www.api.com/'),
-}
+})
 
 // production
-defines['prod'] = {
+defines['prod'] =  Object.assign({}, common, {
   NODE_ENV: JSON.stringify('production'),
-  API_BASE_URL: JSON.stringify('http://www.api.com/'),
-}
+})
 
 // module.exports
 module.exports = defines[APP_ENV]

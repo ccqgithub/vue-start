@@ -4,9 +4,7 @@ var express = require('express')
 var webpack = require('webpack')
 var proxyMiddleware = require('http-proxy-middleware')
 var serverConfig = require('../config/server.conf')
-var webpackConfig = process.env.NODE_ENV === 'testing'
-  ? require('./webpack.prod.conf')
-  : require('./webpack.dev.conf')
+var webpackConfig = require('./webpack.conf')
 
 // default port where dev server listens for incoming traffic
 var port = serverConfig.port
@@ -27,6 +25,7 @@ var devMiddleware = require('webpack-dev-middleware')(compiler, {
 var hotMiddleware = require('webpack-hot-middleware')(compiler, {
   log: () => {}
 })
+
 // force page reload when html-webpack-plugin template changes
 compiler.plugin('compilation', function (compilation) {
   compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
@@ -55,8 +54,8 @@ app.use(devMiddleware)
 app.use(hotMiddleware)
 
 // serve pure static assets
-var staticPath = path.posix.join(serverConfig.publicPath, './static')
-app.use(staticPath, express.static('./static'))
+var staticPath = path.posix.join(serverConfig.publicPath)
+app.use(staticPath, express.static('./'))
 
 var uri = 'http://localhost:' + port
 
