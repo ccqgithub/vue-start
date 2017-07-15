@@ -60,10 +60,10 @@
 ```json
 "scripts": {
   "test": "echo \"Error: no test specified\" && exit 1",
-  "build-local": "APP_ENV=local node build/build.js",
-  "build": "APP_ENV=prod node build/build.js",
-  "dev": "APP_ENV=local node build/dev-server.js"
-},
+  "build-test": "cross-env NODE_ENV=production APP_ENV=test node build/build.js",
+  "build-prod": "cross-env NODE_ENV=production APP_ENV=prod node build/build.js",
+  "dev": "cross-env NODE_ENV=development APP_ENV=local node build/dev-server.js"
+}
 ```
 
 下面是两个例子，自己可以根据需求在scripts中添加修改自定义命令
