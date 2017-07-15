@@ -7,7 +7,7 @@
 - [vue@2](https://vuejs.org/)
 - [vue-router@2](https://router.vuejs.org/)
 - [vuex@2](https://vuex.vuejs.org/)
-- [webpack@2](https://webpack.js.org/)
+- [webpack@3](https://webpack.js.org/)
 
 ## 两个重要环境变量
 
