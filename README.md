@@ -15,7 +15,6 @@
 
 - `development`
 - `production`
-- `testing`
 
 > `process.env.APP_ENV`, 表示针对不同发布环境的构建而不同，主要服务于`config/define.conf.js` 和 `config/public.conf.js`，比如不同环境配置不同API 和域名等等...
 
