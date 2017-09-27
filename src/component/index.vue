@@ -6,7 +6,7 @@
     </span>
     <ul>
       <li>
-        <router-link :to="{ name: 'home'}" exact>Home2</router-link>
+        <router-link :to="{ name: 'home'}" exact>Home</router-link>
       </li>
       <li>
         <router-link :to="{ name: 'user'}" exact>User</router-link>
