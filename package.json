@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "build-test": "cross-env NODE_ENV=production APP_ENV=test node build/build.js",
+    "build-dev": "cross-env NODE_ENV=production APP_ENV=local node build/build.js",
     "build-prod": "cross-env NODE_ENV=production APP_ENV=prod node build/build.js",
     "dev": "cross-env NODE_ENV=development APP_ENV=local node build/dev-server.js"
   },

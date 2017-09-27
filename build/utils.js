@@ -1,13 +1,13 @@
-var path = require('path')
-var publicConf = require('../config/public.conf')
-var isProduction = process.env.NODE_ENV === 'production'
+const path = require('path');
+const publicConf = require('../config/public.conf');
+const isProduction = process.env.NODE_ENV === 'production';
 
 // get style loaders
 exports.getStyleLoaders = function(options) {
-  options = options || {}
+  options = options || {};
 
-  var styleLooader = options.isVue ? 'vue-style-loader' : 'style-loader';
-  var cssLoader = {
+  let styleLooader = options.isVue ? 'vue-style-loader' : 'style-loader';
+  let cssLoader = {
     loader: 'css-loader',
     options: {
       minimize: isProduction,
@@ -17,7 +17,7 @@ exports.getStyleLoaders = function(options) {
 
   // generate loader string to be used with extract text plugin
   function generateLoaders (loader, loaderOptions) {
-    var loaders = [cssLoader]
+    let loaders = [cssLoader]
     if (loader) {
       loaders.push({
         loader: loader + '-loader',
