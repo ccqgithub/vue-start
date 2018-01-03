@@ -1,84 +1,75 @@
-const opn = require('opn');
+const fs = require('fs');
 const path = require('path');
-const express = require('express');
+const koa = require('koa');
+const staticServe = require('koa-static');
 const webpack = require('webpack');
-const proxyMiddleware = require('http-proxy-middleware');
-const serverConfig = require('../config/server.conf');
-const webpackConfig = require('./webpack.conf');
+const hotMiddleware = require('koa-webpack-hot');
+const opn = require('opn');
+const proxy = require('koa-proxies');
+const httpsProxyAgent = require('https-proxy-agent');
 
-// default port where dev server listens for incoming traffic
-const port = serverConfig.port;
-// automatically open browser, if not set will be false
-const autoOpenBrowser = !!serverConfig.autoOpenBrowser;
-// Define HTTP proxies to your custom API backend
-// https://github.com/chimurai/http-proxy-middleware
-const proxyTable = serverConfig.proxy;
+const publicConfig = require('../config/public.conf');
+const config = require('../config/server.conf');
+const webpackConfig = require('../build/webpack.conf');
 
-const app = express();
+// new app
+const app = new koa();
+
 const compiler = webpack(webpackConfig);
+// run webpack
+const watching = compiler.watch({
+  // aggregateTimeout: 300,
+  // poll: undefined
+}, (err, stats) => {
+  console.log(err);
+  // console.log(stats)
+  const info = stats.toJson();
 
-const devMiddleware = require('webpack-dev-middleware')(compiler, {
-  publicPath: webpackConfig.output.publicPath,
-  quiet: true
+  if (stats.hasErrors()) {
+    console.error(info.errors);
+  }
+
+  if (stats.hasWarnings()) {
+    console.warn(info.warnings)
+  }
 });
 
-const hotMiddleware = require('webpack-hot-middleware')(compiler, {
-  log: () => {}
+app.use(hotMiddleware(compiler, {
+  log: console.log,
+  // path: '/__webpack_hmr',
+  // heartbeat: 10 * 1000
+}));
+
+//如果为 true，则解析 "Host" 的 header 域，并支持 X-Forwarded-Host
+app.proxy = true;
+//默认为2，表示 .subdomains 所忽略的字符偏移量。
+app.subdomainOffset = 2;
+
+// not caught errors
+app.on('error', (err, ctx) => {
+  console.log(err);
+  console.log(err.stack);
 });
 
-// force page reload when html-webpack-plugin template changes
-compiler.plugin('compilation', function (compilation) {
-  compilation.plugin('html-webpack-plugin-after-emit', function (data, cb) {
-    hotMiddleware.publish({ action: 'reload' });
-    cb();
-  });
+// 静态文件
+app.use(staticServe(publicConfig.distPath));
+
+const proxies = config.proxies || {};
+Object.keys(proxies).forEach(key => {
+  app.use(proxy(key, proxies[key]));
 });
 
-// proxy api requests
-Object.keys(proxyTable).forEach(function (context) {
-  let options = proxyTable[context];
-  if (typeof options === 'string') {
-    options = { target: options };
-  }
-  app.use(proxyMiddleware(options.filter || context, options));
-})
+// not found
+app.use(async (ctx, next) => {
+  console.log(ctx.path)
+  ctx.throw('Not Found!', 404);
+});
 
-// handle fallback for HTML5 history API
-app.use(require('connect-history-api-fallback')());
+// 开启监听服务
+const server = app.listen(config.port);
 
-// serve webpack bundle output
-app.use(devMiddleware);
-
-// enable hot-reload and state-preserving
-// compilation error display
-app.use(hotMiddleware);
-
-// serve pure static assets
-const staticPath = path.posix.join(serverConfig.publicPath);
-app.use(staticPath, express.static('./'));
-
-const uri = 'http://localhost:' + port;
-
-let _resolve;
-let readyPromise = new Promise(resolve => {
-  _resolve = resolve;
-})
-
-console.log('> Starting dev server...');
-devMiddleware.waitUntilValid(() => {
-  console.log('> Listening at ' + uri + '\n');
-  // when env is testing, don't need open it
-  if (autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
-    opn(uri);
-  }
-  _resolve();
-})
-
-const server = app.listen(port);
-
-module.exports = {
-  ready: readyPromise,
-  close: () => {
-    server.close();
-  }
+// autoOpenBrowser
+if (config.autoOpenBrowser && process.env.NODE_ENV !== 'testing') {
+  const uri = 'http://localhost:' + config.port;
+  opn(uri);
 }

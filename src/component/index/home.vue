@@ -14,7 +14,7 @@
         <a href="javascript:;" @click="addNewUser">Add</a>
         <a href="javascript:;" @click="userShuffle">洗牌</a>
       </div>
-      <transition-group tag="ul" name="list" class="users">
+      <transition-group tag="ul" name="list" class="users" appear>
         <li v-for="(user, index) in filterUsers" :key="user.id">
           <em>
             {{user.id}}
